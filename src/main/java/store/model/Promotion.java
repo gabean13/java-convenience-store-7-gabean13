@@ -1,15 +1,16 @@
 package store.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class Promotion {
     private String name;
     private int requiredQuantity;
     private int presentQuantity;
-    private Date startDate;
-    private Date endDate;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
 
-    public Promotion(String name, int requiredQuantity, int presentQuantity, Date startDate, Date endDate) {
+    public Promotion(String name, int requiredQuantity, int presentQuantity, LocalDateTime startDate,
+                     LocalDateTime endDate) {
         this.name = name;
         this.requiredQuantity = requiredQuantity;
         this.presentQuantity = presentQuantity;
