@@ -47,4 +47,9 @@ public class Product {
 
         return super.equals(o);
     }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
 }

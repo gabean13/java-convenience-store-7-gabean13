@@ -38,4 +38,9 @@ public class Stock {
         }
         return super.equals(o);
     }
+
+    @Override
+    public int hashCode() {
+        return product.hashCode();
+    }
 }
