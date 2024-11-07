@@ -1,6 +1,6 @@
 package store.common;
 
-public class MessageConstants {
+public class MenuMessageConstants {
     //기본 안내 메세지
     public static final String GREETING = "안녕하세요. W편의점입니다.\n현재 보유하고 있는 상품입니다.\n";
     public static final String PURCHASE_GUIDE = "구매하실 상품명과 수량을 입력해 주세요. (예: [사이다-2],[감자칩-1])\n";
@@ -9,10 +9,9 @@ public class MessageConstants {
     public static final String MEMBERSHIP_GUIDE = "멤버십 할인을 받으시겠습니까? (Y/N)\n";
     public static final String ADDITIONAL_PURCHASE_GUIDE = "감사합니다. 구매하고 싶은 다른 상품이 있나요? (Y/N)\n";
 
-    //에러 메세지
-    public static final String ERROR_MESSAGE_PREFIX ="[ERROR] ";
-    public static final String ERROR_INVALID_PURCHASE_FORMAT = "올바르지 않은 형식으로 입력했습니다. 다시 입력해 주세요.\n";
-    public static final String ERROR_PRODUCT_NOT_FOUND = "존재하지 않는 상품입니다. 다시 입력해 주세요.\n";
-    public static final String ERROR_EXCEEDED_STOCK_QUANTITY= "재고 수량을 초과하여 구매할 수 없습니다. 다시 입력해 주세요.\n";
-    public static final String ERROR_INVALID_INPUT = "잘못된 입력입니다. 다시 입력해 주세요.\n";
+    //메뉴 출력
+    public static final String MENU_GUIDE_WITH_STOCK_PROMOTION = "- {0} {1}원 {2}개 {3}\n";
+    public static final String MENU_GUIDE_WITH_STOCK = "- {0} {1}원 {2}개\n";
+    public static final String MENU_GUIDE_OUT_OF_STOCK_PROMOTION = "- {0} {1}원 재고 없음 {2}\n";
+    public static final String MENU_GUIDE_OUT_OF_STOCK = "- {0} {1}원 재고없음\n";
 }
