@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import store.common.FileNameConstants;
 import store.model.Product;
 import store.model.Promotion;
 import store.model.Stock;
@@ -21,7 +22,7 @@ public class InitialSettingService {
     }
 
     public Map<String, Promotion> convertFileToPromotions() {
-        List<String> promotionFile = fileService.readPromotionFile();
+        List<String> promotionFile = fileService.readFile(FileNameConstants.PROMOTION_FILE_NAME);
         Map<String, Promotion> promotions = new HashMap<>();
         for (String file : promotionFile) {
             List<String> line = Arrays.stream(file.split(",")).toList();
@@ -60,7 +61,7 @@ public class InitialSettingService {
     }
 
     public List<Stock> convertFileToStocks() {
-        List<String> productFile = fileService.readProductFile();
+        List<String> productFile = fileService.readFile(FileNameConstants.PRODUCT_FILE_NAME);
         List<Stock> stocks = new ArrayList<>();
 
         for (String file : productFile) {
