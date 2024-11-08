@@ -17,37 +17,22 @@ import store.model.Stock;
 public class InitialSettingService {
     private final FileService fileService;
 
-    public InitialSettingService() {
-        fileService = new FileService();
+    public InitialSettingService(FileService fileService) {
+        this.fileService = fileService;
     }
 
     public Map<String, Promotion> convertFileToPromotions() {
         List<String> promotionFile = fileService.readFile(FileNameConstants.PROMOTION_FILE_NAME);
+        return getPromotionMap(promotionFile);
+    }
+
+    protected Map<String, Promotion> getPromotionMap(List<String> promotionFile) {
         Map<String, Promotion> promotions = new HashMap<>();
         for (String file : promotionFile) {
             List<String> line = Arrays.stream(file.split(",")).toList();
             promotions.put(line.get(0), parsePromotion(line));
         }
-
         return promotions;
-    }
-
-    private static void saveGeneralStock(List<Stock> stocks, Stock stock, int quantity) {
-        if (!stocks.contains(stock)) {
-            stock.saveGeneralQuantity(quantity);
-            stocks.add(stock);
-            return;
-        }
-        stocks.get(stocks.indexOf(stock)).saveGeneralQuantity(quantity);
-    }
-
-    private static void savePromotionStock(List<Stock> stocks, Stock stock, int quantity, Product product) {
-        if (!stocks.contains(stock)) {
-            stock.savePromotionQuantity(quantity);
-            stocks.add(stock);
-            return;
-        }
-        stocks.get(stocks.indexOf(product)).savePromotionQuantity(quantity);
     }
 
     private Promotion parsePromotion(List<String> line) {
@@ -55,13 +40,17 @@ public class InitialSettingService {
         int requiredQuantity = Integer.parseInt(line.get(1));
         int presentQuantity = Integer.parseInt(line.get(2));
         LocalDateTime startDate = LocalDate.parse(line.get(3), DateTimeFormatter.ISO_DATE).atStartOfDay();
-        LocalDateTime endDate = LocalDate.parse(line.get(3), DateTimeFormatter.ISO_DATE).atTime(LocalTime.MAX);
+        LocalDateTime endDate = LocalDate.parse(line.get(4), DateTimeFormatter.ISO_DATE).atTime(LocalTime.MAX);
 
         return new Promotion(name, requiredQuantity, presentQuantity, startDate, endDate);
     }
 
     public List<Stock> convertFileToStocks() {
         List<String> productFile = fileService.readFile(FileNameConstants.PRODUCT_FILE_NAME);
+        return getStocks(productFile);
+    }
+
+    protected List<Stock> getStocks(List<String> productFile) {
         List<Stock> stocks = new ArrayList<>();
 
         for (String file : productFile) {
@@ -87,5 +76,23 @@ public class InitialSettingService {
 
     private Product parseProduct(String name, String price, String promotionName) {
         return new Product(name, Integer.parseInt(price), promotionName);
+    }
+
+    private static void saveGeneralStock(List<Stock> stocks, Stock stock, int quantity) {
+        if (!stocks.contains(stock)) {
+            stock.saveGeneralQuantity(quantity);
+            stocks.add(stock);
+            return;
+        }
+        stocks.get(stocks.indexOf(stock)).saveGeneralQuantity(quantity);
+    }
+
+    private static void savePromotionStock(List<Stock> stocks, Stock stock, int quantity, Product product) {
+        if (!stocks.contains(stock)) {
+            stock.savePromotionQuantity(quantity);
+            stocks.add(stock);
+            return;
+        }
+        stocks.get(stocks.indexOf(product)).savePromotionQuantity(quantity);
     }
 }
