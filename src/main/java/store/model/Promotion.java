@@ -17,4 +17,12 @@ public class Promotion {
         this.startDate = startDate;
         this.endDate = endDate;
     }
+
+    public int promotionUnit() {
+        return requiredQuantity + presentQuantity;
+    }
+
+    public boolean promotionShortage(int purchaseQuantity) {
+        return purchaseQuantity == requiredQuantity;
+    }
 }

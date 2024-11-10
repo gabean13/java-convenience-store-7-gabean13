@@ -40,8 +40,7 @@ public class Product {
 
     @Override
     public boolean equals(Object o) {
-        if (o != null && o instanceof Product) {
-            Product product = (Product) o;
+        if (o instanceof Product product) {
             return this.name.equals(product.name);
         }
 
@@ -51,5 +50,17 @@ public class Product {
     @Override
     public int hashCode() {
         return name.hashCode();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    protected String getPromotionName() {
+        return promotionName;
+    }
+
+    protected int getPrice() {
+        return price;
     }
 }

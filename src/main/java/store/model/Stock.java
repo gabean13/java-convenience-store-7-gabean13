@@ -30,6 +30,33 @@ public class Stock {
         return sb.toString();
     }
 
+    public String getName() {
+        return product.getName();
+    }
+
+    public int getPromotionQuantity() {
+        return promotionQuantity;
+    }
+
+    public int getTotalQuantity() {
+        return generalQuantity + promotionQuantity;
+    }
+
+    public boolean hasPromotion() {
+        if (product.isPromotionProduct()) {
+            return true;
+        }
+        return false;
+    }
+
+    public String getPromotionName() {
+        return product.getPromotionName();
+    }
+
+    public int getPrice() {
+        return product.getPrice();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o != null && o instanceof Stock) {
@@ -42,5 +69,18 @@ public class Stock {
     @Override
     public int hashCode() {
         return product.hashCode();
+    }
+
+    public void updateStocks(int quantity) {
+        if (product.isPromotionProduct() && promotionQuantity > 0) {
+            promotionQuantity -= quantity;
+            if (promotionQuantity < 0) {
+                generalQuantity += promotionQuantity;
+                promotionQuantity = 0;
+            }
+            return;
+        }
+
+        generalQuantity -= quantity;
     }
 }
