@@ -1,14 +1,16 @@
 package store.service;
 
+import camp.nextstep.edu.missionutils.DateTimes;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import store.common.CommonMessageConstants;
 import store.common.FileNameConstants;
 import store.model.Product;
 import store.model.Promotion;
@@ -21,6 +23,24 @@ public class InitialSettingService {
         this.fileService = fileService;
     }
 
+    private static void saveGeneralStock(Map<String, Stock> stocks, Stock stock, int quantity) {
+        if (!stocks.containsKey(stock.getName())) {
+            stock.saveGeneralQuantity(quantity);
+            stocks.put(stock.getName(), stock);
+            return;
+        }
+        stocks.get(stock.getName()).saveGeneralQuantity(quantity);
+    }
+
+    private static void savePromotionStock(Map<String, Stock> stocks, Stock stock, int quantity, Product product) {
+        if (!stocks.containsKey(product.getName())) {
+            stock.savePromotionQuantity(quantity);
+            stocks.put(product.getName(), stock);
+            return;
+        }
+        stocks.get(product.getName()).savePromotionQuantity(quantity);
+    }
+
     public Map<String, Promotion> convertFileToPromotions() {
         List<String> promotionFile = fileService.readFile(FileNameConstants.PROMOTION_FILE_NAME);
         return getPromotionMap(promotionFile);
@@ -30,7 +50,10 @@ public class InitialSettingService {
         Map<String, Promotion> promotions = new HashMap<>();
         for (String file : promotionFile) {
             List<String> line = Arrays.stream(file.split(",")).toList();
-            promotions.put(line.get(0), parsePromotion(line));
+            Promotion promotion = parsePromotion(line);
+            if (promotion != null) {
+                promotions.put(line.get(0), promotion);
+            }
         }
         return promotions;
     }
@@ -42,27 +65,45 @@ public class InitialSettingService {
         LocalDateTime startDate = LocalDate.parse(line.get(3), DateTimeFormatter.ISO_DATE).atStartOfDay();
         LocalDateTime endDate = LocalDate.parse(line.get(4), DateTimeFormatter.ISO_DATE).atTime(LocalTime.MAX);
 
-        return new Promotion(name, requiredQuantity, presentQuantity, startDate, endDate);
+        if (isBetweenStartDateAndEndDate(startDate, endDate)) {
+            return new Promotion(name, requiredQuantity, presentQuantity, startDate, endDate);
+        }
+        return null;
     }
 
-    public List<Stock> convertFileToStocks() {
+    private boolean isBetweenStartDateAndEndDate(LocalDateTime startDate, LocalDateTime endDate) {
+        LocalDateTime now = DateTimes.now();
+        if (now.isAfter(startDate) && now.isBefore(endDate)) {
+            return true;
+        }
+        return false;
+    }
+
+    public Map<String, Stock> convertFileToStocks(Map<String, Promotion> promotions) {
         List<String> productFile = fileService.readFile(FileNameConstants.PRODUCT_FILE_NAME);
-        return getStocks(productFile);
+        return getStocks(productFile, promotions);
     }
 
-    protected List<Stock> getStocks(List<String> productFile) {
-        List<Stock> stocks = new ArrayList<>();
+    protected Map<String, Stock> getStocks(List<String> productFile, Map<String, Promotion> promotions) {
+        Map<String, Stock> stocks = new LinkedHashMap<>();
 
         for (String file : productFile) {
             List<String> line = Arrays.stream(file.split(",")).toList();
-            saveStock(line, stocks);
+            saveStock(line, stocks, promotions);
         }
 
         return stocks;
     }
 
-    private void saveStock(List<String> line, List<Stock> stocks) {
-        Product product = parseProduct(line.get(0), line.get(1), line.get(3));
+    private Product parseProduct(String name, String price, String promotionName, Map<String, Promotion> promotions) {
+        if (promotions.containsKey(promotionName)) {
+            return new Product(name, Integer.parseInt(price), promotionName);
+        }
+        return new Product(name, Integer.parseInt(price), CommonMessageConstants.NULL_STRING);
+    }
+
+    private void saveStock(List<String> line, Map<String, Stock> stocks, Map<String, Promotion> promotions) {
+        Product product = parseProduct(line.get(0), line.get(1), line.get(3), promotions);
         Stock stock = new Stock(product);
 
         int quantity = Integer.parseInt(line.get(2));
@@ -72,27 +113,5 @@ public class InitialSettingService {
         }
 
         saveGeneralStock(stocks, stock, quantity);
-    }
-
-    private Product parseProduct(String name, String price, String promotionName) {
-        return new Product(name, Integer.parseInt(price), promotionName);
-    }
-
-    private static void saveGeneralStock(List<Stock> stocks, Stock stock, int quantity) {
-        if (!stocks.contains(stock)) {
-            stock.saveGeneralQuantity(quantity);
-            stocks.add(stock);
-            return;
-        }
-        stocks.get(stocks.indexOf(stock)).saveGeneralQuantity(quantity);
-    }
-
-    private static void savePromotionStock(List<Stock> stocks, Stock stock, int quantity, Product product) {
-        if (!stocks.contains(stock)) {
-            stock.savePromotionQuantity(quantity);
-            stocks.add(stock);
-            return;
-        }
-        stocks.get(stocks.indexOf(product)).savePromotionQuantity(quantity);
     }
 }
