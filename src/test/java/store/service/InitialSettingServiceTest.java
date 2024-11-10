@@ -26,7 +26,8 @@ class InitialSettingServiceTest {
     void success_convertFileToPromotions() {
         List<String> testPromotionContents = List.of(
                 "탄산2+1,2,1,2024-01-01,2024-12-31",
-                "MD추천상품,1,1,2024-01-01,2024-12-31"
+                "MD추천상품,1,1,2024-01-01,2024-12-31",
+                "날짜지난프로모션,1,1,2023-01-01,2023-12-31"
         );
 
         Map<String, Promotion> promotions = initialSettingService.getPromotionMap(testPromotionContents);
@@ -51,20 +52,30 @@ class InitialSettingServiceTest {
     @Test
     @DisplayName("product 파일을 불러와서 저장한다")
     void success_convertFileToStocks() {
+        LocalDateTime startDate = LocalDateTime.of(2024, 1, 1, 0, 0, 0);
+        LocalDateTime endDate = LocalDateTime.of(2024, 12, 31, 23, 59, 59, 999999999);
+        Map<String, Promotion> promotions = Map.of(
+                "탄산2+1", new Promotion("탄산2+1",2,1, startDate, endDate)
+        );
         List<String> testProductContents = List.of(
                 "콜라,1000,10,탄산2+1",
                 "콜라,1000,10,null",
-                "사이다,1000,8,탄산2+1"
+                "사이다,1000,8,탄산2+1",
+                "test,1000,8,지난프로모션",
+                "test,1000,8,null"
         );
 
-        List<Stock> stocks = initialSettingService.getStocks(testProductContents);
+        Map<String, Stock> stocks = initialSettingService.getStocks(testProductContents, promotions);
 
-        Assertions.assertThat(stocks).hasSize(2);
-        Stock stock1 = stocks.get(0);
+        Assertions.assertThat(stocks).hasSize(3);
+        Stock stock1 = stocks.get("콜라");
         Assertions.assertThat(stock1).hasFieldOrPropertyWithValue("generalQuantity", 10);
         Assertions.assertThat(stock1).hasFieldOrPropertyWithValue("promotionQuantity", 10);
-        Stock stock2 = stocks.get(1);
+        Stock stock2 = stocks.get("사이다");
         Assertions.assertThat(stock2).hasFieldOrPropertyWithValue("generalQuantity", 0);
         Assertions.assertThat(stock2).hasFieldOrPropertyWithValue("promotionQuantity", 8);
+        Stock stock3 = stocks.get("test");
+        Assertions.assertThat(stock3).hasFieldOrPropertyWithValue("generalQuantity", 8);
+        Assertions.assertThat(stock3).hasFieldOrPropertyWithValue("promotionQuantity", 0);
     }
 }
