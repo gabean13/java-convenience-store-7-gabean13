@@ -1,8 +1,9 @@
 package store.view;
 
-import java.util.List;
+import java.util.Map;
 import store.common.CommonMessageConstants;
 import store.common.MenuMessageConstants;
+import store.model.Receipt;
 import store.model.Stock;
 
 public class OutputView {
@@ -11,10 +12,28 @@ public class OutputView {
         System.out.println(str);
     }
 
-    public void printGreetingAndMenu(List<Stock> stocks) {
+    public void printGreetingAndMenu(Map<String, Stock> stocks) {
         StringBuilder sb = new StringBuilder();
         sb.append(MenuMessageConstants.GREETING).append(CommonMessageConstants.NEW_LINE);
-        stocks.stream().map(Stock::getMenuDetails).forEach(sb::append);
+        for (Stock stock : stocks.values()) {
+            sb.append(stock.getMenuDetails());
+        }
+        //마지막 줄 개행 삭제
+        sb.setLength(sb.length() - 1);
         print(sb.toString());
+    }
+
+    public void printReceipt(Receipt receipt) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(MenuMessageConstants.RECEIPT_START).append(MenuMessageConstants.RECEIPT_START_DESCRIPTION)
+                .append(receipt.lineUpPurchasedProductsReceipt());
+        sb.append(MenuMessageConstants.RECEIPT_PROMOTION).append(receipt.lineUpPromotionProductsReceipt());
+        sb.append(MenuMessageConstants.RECEIPT_LINE).append(receipt.lineUpPurchaseInfo())
+                .append(CommonMessageConstants.NEW_LINE);
+        print(sb.toString());
+    }
+
+    public void printError(String errorMessage) {
+        print(errorMessage);
     }
 }
