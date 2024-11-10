@@ -8,15 +8,16 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
+import store.common.FileNameConstants;
 
 public class FileService {
     public List<String> readFile(String fileName) {
-        Path path = Paths.get("src", "main", "resources", fileName);
+        Path path = Paths.get(FileNameConstants.FILE_DIRECTORY, fileName);
         return convertFile(path);
     }
 
-    private List<String> convertFile(Path path) {
-        try (Stream<String> lines = Files.lines(path, StandardCharsets.UTF_8)){
+    protected List<String> convertFile(Path path) {
+        try (Stream<String> lines = Files.lines(path, StandardCharsets.UTF_8)) {
             //제일 첫번째 줄은 설명이므로 삭제
             return lines.skip(1).toList();
         } catch (IOException e) {
