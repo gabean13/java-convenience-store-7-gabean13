@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import store.model.Promotion;
+import store.model.PurchasedProduct;
 import store.model.Receipt;
-import store.model.Receipt.PurchasedProduct;
 import store.model.Stock;
 import store.view.InputView;
 
@@ -39,7 +39,7 @@ public class PurchaseService {
                                            Map<String, Stock> stocks) {
         for (String name : purchase.keySet()) {
             Stock stock = stocks.get(name);
-            if (stock.hasPromotion()) {
+            if (stock.isPromotion()) {
                 checkPromotion(stocks.get(name), purchase.get(name), promotions.get(stock.getPromotionName()));
                 continue;
             }
@@ -47,17 +47,21 @@ public class PurchaseService {
         }
     }
 
-    private void checkPromotion(Stock stock, int purchaseQuantity, Promotion promotion) {
-        int promotionQuantity = stock.getPromotionQuantity();
-        int promotionUnit = promotion.promotionUnit();
+    protected void checkPromotion(Stock stock, int purchaseQuantity, Promotion promotion) {
+        int promotionUnit = promotion.getPromotionUnit();
         int neededPromotionUnit = purchaseQuantity / promotionUnit;
-        int availablePromotionUnit = promotionQuantity / promotionUnit;
+        int availablePromotionUnit = stock.getPromotionQuantity() / promotionUnit;
+        int redundantQuantity = purchaseQuantity - promotionUnit * neededPromotionUnit;
+        if(redundantQuantity == promotion.getRequiredQuantity()) {
+            neededPromotionUnit++;
+        }
 
-        if (isPromotionQuantityShortage(purchaseQuantity, promotion, availablePromotionUnit, neededPromotionUnit, promotionUnit)) {
+        if (isPromotionQuantityShortage(availablePromotionUnit, neededPromotionUnit)) {
             checkNoPromotion(stock, purchaseQuantity, availablePromotionUnit, promotionUnit);
             return;
         }
-        if (isAdditionalPromotionAvailable(purchaseQuantity, promotionUnit, neededPromotionUnit)) {
+
+        if (isAdditionalPromotionAvailable(redundantQuantity, promotion)) {
             checkAddPromotion(stock, purchaseQuantity, neededPromotionUnit);
             return;
         }
@@ -65,24 +69,22 @@ public class PurchaseService {
         addPurchase(stock.getName(), purchaseQuantity, neededPromotionUnit);
     }
 
-    private boolean isPromotionQuantityShortage(int purchaseQuantity, Promotion promotion, int availablePromotionUnit, int neededPromotionUnit, int promotionUnit) {
-        return availablePromotionUnit < neededPromotionUnit ||
-                ( promotion.promotionShortage(purchaseQuantity) && availablePromotionUnit == 0 ) ||
-                ( availablePromotionUnit == neededPromotionUnit && purchaseQuantity - promotionUnit * neededPromotionUnit != 0);
+    private boolean isPromotionQuantityShortage(int availablePromotionUnit, int neededPromotionUnit) {
+        return availablePromotionUnit < neededPromotionUnit;
     }
 
-    private boolean isAdditionalPromotionAvailable(int purchaseQuantity, int promotionUnit, int neededPromotionUnit) {
-        return purchaseQuantity - promotionUnit * neededPromotionUnit != 0;
+    private boolean isAdditionalPromotionAvailable(int redundantQuantity, Promotion promotion) {
+        return redundantQuantity >= promotion.getRequiredQuantity();
     }
 
     private void checkAddPromotion(Stock stock, int purchaseQuantity, int neededPromotionUnit) {
         boolean addPromotion = inputView.getPromotion(stock.getName());
         if (addPromotion) {
-            addPurchase(stock.getName(), purchaseQuantity + 1, neededPromotionUnit + 1);
+            addPurchase(stock.getName(), purchaseQuantity + 1, neededPromotionUnit);
+            return;
         }
-        if (!addPromotion) {
-            addPurchase(stock.getName(), purchaseQuantity, neededPromotionUnit);
-        }
+
+        addPurchase(stock.getName(), purchaseQuantity, neededPromotionUnit-1);
     }
 
     private void checkNoPromotion(Stock stock, int purchaseQuantity, int availablePromotionUnit, int promotionUnit) {
@@ -90,10 +92,9 @@ public class PurchaseService {
         boolean notPromotion = inputView.getNotPromotion(stock.getName(), regularPriceQuantity);
         if (notPromotion) {
             addPurchase(stock.getName(), purchaseQuantity, availablePromotionUnit);
+            return;
         }
-        if (!notPromotion) {
-            addPurchase(stock.getName(), purchaseQuantity - regularPriceQuantity, availablePromotionUnit);
-        }
+        addPurchase(stock.getName(), purchaseQuantity - regularPriceQuantity, availablePromotionUnit);
     }
 
     private void addPurchase(String name, int purchaseQuantity, int promotionQuantity) {
@@ -101,9 +102,7 @@ public class PurchaseService {
         promotionProducts.add(new PurchasedProduct(name, promotionQuantity));
     }
 
-    public Map<String, Stock> updateStocks(Map<String, Stock> stocks, Receipt receipt) {
-        List<PurchasedProduct> receiptPurchasedProducts = receipt.getPurchasedProducts();
-
+    public Map<String, Stock> updateStocks(Map<String, Stock> stocks, List<PurchasedProduct> receiptPurchasedProducts) {
         for (PurchasedProduct product : receiptPurchasedProducts) {
             String name = product.getName();
             stocks.get(name).updateStocks(product.getQuantity());
