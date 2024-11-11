@@ -24,7 +24,7 @@ public class PurchaseController {
         while (true) {
             outputView.printGreetingAndMenu(stocks);
             Receipt receipt = purchaseService.purchase(getPurchaseInput(stocks), promotions, stocks);
-            stocks = purchaseService.updateStocks(stocks, receipt);
+            stocks = purchaseService.updateStocks(stocks, receipt.getPurchasedProducts());
             outputView.printReceipt(receipt);
             if (!inputView.getAdditionalPurchase()) {
                 return;

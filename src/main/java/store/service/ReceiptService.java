@@ -12,12 +12,7 @@ public class ReceiptService {
     static private final int MAX_MEMBERSHIP_DISCOUNT = 8000;
 
     public Receipt calculateReceipt(Map<String, Stock> stocks, List<PurchasedProduct> promotionProducts, List<PurchasedProduct> purchasedProducts, boolean membership) {
-        Receipt receipt = new Receipt();
-        receipt.setPromotionProducts(updateProductsPrice(stocks, promotionProducts));
-        receipt.setPurchasedProducts(updateProductsPrice(stocks, purchasedProducts));
-        receipt.setPurchaseInfo(updatePurchaseInfo(stocks, promotionProducts, purchasedProducts, membership));
-
-        return receipt;
+        return new Receipt(updateProductsPrice(stocks, purchasedProducts), updateProductsPrice(stocks, promotionProducts), updatePurchaseInfo(stocks, promotionProducts, purchasedProducts, membership));
     }
 
     protected List<PurchasedProduct> updateProductsPrice(Map<String, Stock> stocks, List<PurchasedProduct> purchasedProducts) {
@@ -46,7 +41,7 @@ public class ReceiptService {
         int membershipAvailablePrice = 0;
         for (PurchasedProduct purchasedProduct : purchasedProducts) {
             Stock stock = stocks.get(purchasedProduct.getName());
-            if (!stock.hasPromotion() || purchasedProduct.isNotIncludedInPromotion(promotionProducts)) {
+            if (!stock.isPromotion() || purchasedProduct.isNotIncludedInPromotion(promotionProducts)) {
                 membershipAvailablePrice += purchasedProduct.getTotalPrice();
             }
         }
