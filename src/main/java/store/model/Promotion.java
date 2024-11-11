@@ -18,11 +18,11 @@ public class Promotion {
         this.endDate = endDate;
     }
 
-    public int promotionUnit() {
+    public int getPromotionUnit() {
         return requiredQuantity + presentQuantity;
     }
 
-    public boolean promotionShortage(int purchaseQuantity) {
+    public boolean isPromotionShortage(int purchaseQuantity) {
         return purchaseQuantity == requiredQuantity;
     }
 }
