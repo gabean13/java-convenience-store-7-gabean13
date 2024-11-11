@@ -3,15 +3,13 @@ package store.view;
 public class InputValidator {
     private static final String PURCHASE_FORMAT_REGEXP = "\\[[a-zA-Z0-9가-힣]+-\\d+\\](,\\[[a-zA-Z0-9가-힣]+-\\d+\\])*";
 
-    public boolean isPurchaseFormatValid(String input) {
+    public void isPurchaseFormatValid(String input) {
         if (!input.matches(PURCHASE_FORMAT_REGEXP)) {
             throw new IllegalArgumentException();
         }
         if (!isItemFormatValid(input)) {
             throw new IllegalArgumentException();
         }
-
-        return true;
     }
 
     private boolean isItemFormatValid(String input) {

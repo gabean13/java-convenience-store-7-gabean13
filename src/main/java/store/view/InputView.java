@@ -4,6 +4,7 @@ import camp.nextstep.edu.missionutils.Console;
 import java.text.MessageFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import store.common.CommonMessageConstants;
 import store.common.ErrorMessageConstants;
 import store.common.MenuMessageConstants;
 
@@ -49,7 +50,6 @@ public class InputView {
             } catch (IllegalArgumentException e) {
                 printError(ErrorMessageConstants.ERROR_INVALID_INPUT);
             }
-            printError(ErrorMessageConstants.ERROR_INVALID_INPUT);
         }
     }
 
@@ -63,7 +63,6 @@ public class InputView {
             } catch (IllegalArgumentException e) {
                 printError(ErrorMessageConstants.ERROR_INVALID_INPUT);
             }
-            printError(ErrorMessageConstants.ERROR_INVALID_INPUT);
         }
     }
 
@@ -88,12 +87,12 @@ public class InputView {
                 inputValidator.isYesOrNoFormatValid(input);
                 return convertYesOrNo(input);
             } catch (IllegalArgumentException e) {
-                printError(ErrorMessageConstants.ERROR_INVALID_INPUT);
+                printError(ErrorMessageConstants.ERROR_INVALID_INPUT + CommonMessageConstants.NEW_LINE);
             }
         }
     }
 
-    public boolean convertYesOrNo(String input) {
+    private boolean convertYesOrNo(String input) {
         return input.equals("Y");
     }
 
