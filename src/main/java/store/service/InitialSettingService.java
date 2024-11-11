@@ -25,20 +25,20 @@ public class InitialSettingService {
 
     private static void saveGeneralStock(Map<String, Stock> stocks, Stock stock, int quantity) {
         if (!stocks.containsKey(stock.getName())) {
-            stock.saveGeneralQuantity(quantity);
+            stock.setGeneralQuantity(quantity);
             stocks.put(stock.getName(), stock);
             return;
         }
-        stocks.get(stock.getName()).saveGeneralQuantity(quantity);
+        stocks.get(stock.getName()).setGeneralQuantity(quantity);
     }
 
     private static void savePromotionStock(Map<String, Stock> stocks, Stock stock, int quantity, Product product) {
         if (!stocks.containsKey(product.getName())) {
-            stock.savePromotionQuantity(quantity);
+            stock.setPromotionQuantity(quantity);
             stocks.put(product.getName(), stock);
             return;
         }
-        stocks.get(product.getName()).savePromotionQuantity(quantity);
+        stocks.get(product.getName()).setPromotionQuantity(quantity);
     }
 
     public Map<String, Promotion> convertFileToPromotions() {

@@ -22,6 +22,10 @@ public class Promotion {
         return requiredQuantity + presentQuantity;
     }
 
+    public int getRequiredQuantity() {
+        return requiredQuantity;
+    }
+
     public boolean isPromotionShortage(int purchaseQuantity) {
         return purchaseQuantity == requiredQuantity;
     }

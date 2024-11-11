@@ -8,6 +8,13 @@ public class Receipt {
     private List<PurchasedProduct> promotionProducts;
     private PurchaseInfo purchaseInfo;
 
+    public Receipt(List<PurchasedProduct> purchasedProducts, List<PurchasedProduct> promotionProducts,
+                   PurchaseInfo purchaseInfo) {
+        this.purchasedProducts = purchasedProducts;
+        this.promotionProducts = promotionProducts;
+        this.purchaseInfo = purchaseInfo;
+    }
+
     public String lineUpPurchasedProductsReceipt() {
         StringBuilder sb = new StringBuilder();
         for (PurchasedProduct product : purchasedProducts) {
@@ -33,6 +40,10 @@ public class Receipt {
 
     public String lineUpPurchaseInfo() {
         return purchaseInfo.getLineupPurchaseInfo();
+    }
+
+    public List<PurchasedProduct> getPurchasedProducts() {
+        return purchasedProducts;
     }
 
     public boolean isPurchaseNothing() {
@@ -85,21 +96,5 @@ public class Receipt {
         protected int getTotalQuantity() {
             return totalQuantity;
         }
-    }
-
-    public void setPurchaseInfo(PurchaseInfo purchaseInfo) {
-        this.purchaseInfo = purchaseInfo;
-    }
-
-    public List<PurchasedProduct> getPurchasedProducts() {
-        return purchasedProducts;
-    }
-
-    public void setPurchasedProducts(List<PurchasedProduct> purchasedProducts) {
-        this.purchasedProducts = purchasedProducts;
-    }
-
-    public void setPromotionProducts(List<PurchasedProduct> promotionProducts) {
-        this.promotionProducts = promotionProducts;
     }
 }

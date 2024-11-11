@@ -11,14 +11,6 @@ public class Stock {
         this.promotionQuantity = 0;
     }
 
-    public void savePromotionQuantity(int promotionQuantity) {
-        this.promotionQuantity = promotionQuantity;
-    }
-
-    public void saveGeneralQuantity(int generalQuantity) {
-        this.generalQuantity = generalQuantity;
-    }
-
     public String getMenuDetails() {
         StringBuilder sb = new StringBuilder();
         String promotionDetails = product.getPromotionMenuDetail(promotionQuantity);
@@ -28,6 +20,36 @@ public class Stock {
         sb.append(product.getGeneralMenuDetail(generalQuantity));
 
         return sb.toString();
+    }
+
+    public boolean isPromotion() {
+        return product.isPromotionProduct();
+    }
+
+    public void updateStocks(int quantity) {
+        if (product.isPromotionProduct() && promotionQuantity > 0) {
+            promotionQuantity -= quantity;
+            if (promotionQuantity < 0) {
+                generalQuantity += promotionQuantity;
+                promotionQuantity = 0;
+            }
+            return;
+        }
+
+        generalQuantity -= quantity;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Stock stock) {
+            return this.product.equals(stock.product);
+        }
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return product.hashCode();
     }
 
     public String getName() {
@@ -42,13 +64,6 @@ public class Stock {
         return generalQuantity + promotionQuantity;
     }
 
-    public boolean hasPromotion() {
-        if (product.isPromotionProduct()) {
-            return true;
-        }
-        return false;
-    }
-
     public String getPromotionName() {
         return product.getPromotionName();
     }
@@ -57,30 +72,11 @@ public class Stock {
         return product.getPrice();
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (o != null && o instanceof Stock) {
-            Stock stock = (Stock) o;
-            return this.product.equals(stock.product);
-        }
-        return super.equals(o);
+    public void setPromotionQuantity(int promotionQuantity) {
+        this.promotionQuantity = promotionQuantity;
     }
 
-    @Override
-    public int hashCode() {
-        return product.hashCode();
-    }
-
-    public void updateStocks(int quantity) {
-        if (product.isPromotionProduct() && promotionQuantity > 0) {
-            promotionQuantity -= quantity;
-            if (promotionQuantity < 0) {
-                generalQuantity += promotionQuantity;
-                promotionQuantity = 0;
-            }
-            return;
-        }
-
-        generalQuantity -= quantity;
+    public void setGeneralQuantity(int generalQuantity) {
+        this.generalQuantity = generalQuantity;
     }
 }
