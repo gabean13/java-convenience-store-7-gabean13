@@ -18,10 +18,12 @@ public class InputView {
         while (true) {
             printGuide(MenuMessageConstants.PURCHASE_GUIDE);
             String input = Console.readLine();
-            if (inputValidator.isPurchaseFormatValid(input)) {
+            try {
+                inputValidator.isPurchaseFormatValid(input);
                 return convertInputToItems(input);
+            } catch (IllegalArgumentException ex) {
+                printError(ErrorMessageConstants.ERROR_INVALID_PURCHASE_FORMAT);
             }
-            printGuide(ErrorMessageConstants.ERROR_INVALID_PURCHASE_FORMAT);
         }
     }
 
@@ -41,10 +43,13 @@ public class InputView {
         while (true) {
             printGuide(MessageFormat.format(MenuMessageConstants.PROMOTION_BENEFIT_GUIDE, name));
             String input = Console.readLine();
-            if (inputValidator.isYesOrNoFormatValid(input)) {
+            try {
+                inputValidator.isYesOrNoFormatValid(input);
                 return convertYesOrNo(input);
+            } catch (IllegalArgumentException e) {
+                printError(ErrorMessageConstants.ERROR_INVALID_INPUT);
             }
-            printGuide(ErrorMessageConstants.ERROR_INVALID_INPUT);
+            printError(ErrorMessageConstants.ERROR_INVALID_INPUT);
         }
     }
 
@@ -52,10 +57,13 @@ public class InputView {
         while (true) {
             printGuide(MessageFormat.format(MenuMessageConstants.PROMOTION_OUT_OF_STOCK_GUIDE, name, lostQuantity));
             String input = Console.readLine();
-            if (inputValidator.isYesOrNoFormatValid(input)) {
+            try {
+                inputValidator.isYesOrNoFormatValid(input);
                 return convertYesOrNo(input);
+            } catch (IllegalArgumentException e) {
+                printError(ErrorMessageConstants.ERROR_INVALID_INPUT);
             }
-            printGuide(ErrorMessageConstants.ERROR_INVALID_INPUT);
+            printError(ErrorMessageConstants.ERROR_INVALID_INPUT);
         }
     }
 
@@ -63,10 +71,12 @@ public class InputView {
         while (true) {
             printGuide(MenuMessageConstants.MEMBERSHIP_GUIDE);
             String input = Console.readLine();
-            if (inputValidator.isYesOrNoFormatValid(input)) {
+            try {
+                inputValidator.isYesOrNoFormatValid(input);
                 return convertYesOrNo(input);
+            } catch (IllegalArgumentException e) {
+                printError(ErrorMessageConstants.ERROR_INVALID_INPUT);
             }
-            printGuide(ErrorMessageConstants.ERROR_INVALID_INPUT);
         }
     }
 
@@ -74,10 +84,12 @@ public class InputView {
         while (true) {
             printGuide(MenuMessageConstants.ADDITIONAL_PURCHASE_GUIDE);
             String input = Console.readLine();
-            if (inputValidator.isYesOrNoFormatValid(input)) {
+            try {
+                inputValidator.isYesOrNoFormatValid(input);
                 return convertYesOrNo(input);
+            } catch (IllegalArgumentException e) {
+                printError(ErrorMessageConstants.ERROR_INVALID_INPUT);
             }
-            printGuide(ErrorMessageConstants.ERROR_INVALID_INPUT);
         }
     }
 
@@ -87,5 +99,9 @@ public class InputView {
 
     private void printGuide(String message) {
         System.out.println(message);
+    }
+
+    private void printError(String message) {
+        System.out.println(ErrorMessageConstants.ERROR_MESSAGE_PREFIX + message);
     }
 }

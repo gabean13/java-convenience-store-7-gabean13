@@ -5,10 +5,10 @@ public class InputValidator {
 
     public boolean isPurchaseFormatValid(String input) {
         if (!input.matches(PURCHASE_FORMAT_REGEXP)) {
-            return false;
+            throw new IllegalArgumentException();
         }
         if (!isItemFormatValid(input)) {
-            return false;
+            throw new IllegalArgumentException();
         }
 
         return true;
@@ -39,7 +39,8 @@ public class InputValidator {
         return true;
     }
 
-    public boolean isYesOrNoFormatValid(String input) {
-        return input.equals("Y") || input.equals("N");
+    public void isYesOrNoFormatValid(String input) {
+        if(!( input.equals("Y") || input.equals("N") ) )
+            throw new IllegalArgumentException();
     }
 }
