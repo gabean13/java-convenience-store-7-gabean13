@@ -2,9 +2,9 @@ package store.service;
 
 import java.util.List;
 import java.util.Map;
+import store.model.PurchasedProduct;
 import store.model.Receipt;
 import store.model.Receipt.PurchaseInfo;
-import store.model.Receipt.PurchasedProduct;
 import store.model.Stock;
 
 public class ReceiptService {
