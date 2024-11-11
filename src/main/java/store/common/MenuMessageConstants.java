@@ -24,4 +24,5 @@ public class MenuMessageConstants {
     public static final String RECEIPT_START_DESCRIPTION = String.format("%-19s%-10s%-6s\n", "상품명", "수량", "금액");
     public static final String RECEIPT_PROMOTION = "=============증     정===============\n";
     public static final String RECEIPT_LINE = "====================================\n";
+    public static final String RECEIPT_BUY_NOTHING = "\n구매한 상품이 없습니다.\n";
 }
